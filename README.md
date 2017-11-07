@@ -59,6 +59,7 @@ To add the Configo.io Android SDK, follow these steps:
 
     dependencies {
         compile 'com.google.firebase:firebase-messaging:11.4.2' //Required for push notifications
+        compile 'com.android.volley:volley:1.0.0'
         ...
     }
 
