@@ -1,6 +1,6 @@
 ![alt tag](https://s3.eu-central-1.amazonaws.com/configo.io/overview.png)
 
-# Configo Android SDK Documentation (1.8.6)
+# Configo Android SDK Documentation (1.8.7)
 
 ### Table of Contents
 
