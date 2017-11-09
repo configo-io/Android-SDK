@@ -1,6 +1,6 @@
 ![alt tag](https://s3.eu-central-1.amazonaws.com/configo.io/overview.png)
 
-# Configo Android SDK Documentation (1.8.7)
+# Configo Android SDK Documentation (1.9.x)
 
 ### Table of Contents
 
@@ -307,5 +307,4 @@ Configo.sharedInstance().trackFeature("feature-key", FeatureEventType);
 ```
 
 Available `FeatureEventType` values: `View`, `Click`, `Use`.
-
 
