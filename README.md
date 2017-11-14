@@ -46,7 +46,7 @@ To add the Configo.io Android SDK, follow these steps:
         ...
         dependencies {
             ...
-            classpath 'com.google.gms:google-services:3.1.1' //We need this for Google Firebase Plugin
+            classpath 'com.google.gms:google-services:3.0.0' //We need this for Google Firebase Plugin
         }
     }
     ```
@@ -58,7 +58,7 @@ To add the Configo.io Android SDK, follow these steps:
     ...
 
     dependencies {
-        compile 'com.google.firebase:firebase-messaging:11.4.2' //Required for push notifications
+        compile 'com.google.firebase:firebase-messaging:10.0.1' //Required for push notifications
         compile 'com.android.volley:volley:1.0.0'
         ...
     }
@@ -80,6 +80,7 @@ To add the Configo.io Android SDK, follow these steps:
         </intent-filter>
     </activity>
     ```
+    <pre><b>NOTE:</b> do not add this to the existing &lt;intent-filter&gt; with the category `LAUNCHER`. Instead add this as a new &lt;intent-filter&gt;</pre>
 
 <a name="initialize"></a>
 ## Initialize
@@ -93,12 +94,21 @@ To add the Configo.io Android SDK, follow these steps:
             //Code executed when configo is updated
         }
     });
-
-    Configo.sharedInstance().handleIntent(getIntent());
     ```
     <pre><b>NOTE:</b> The initialization should be called only once in the lifetime of the app.<br>It has no effect on any consecutive calls.</pre>
+    
+2. In the `LAUNCHER` activity, or in the activity where you set the `<intent-filter>` with Configo's URL Scheme add the intent handler in the `onCreate` method:
+    ```java
+    boolean didHandle = Configo.sharedInstance().handleIntent(getIntent());
+    ```
+    
+2. To access deep link data from a Configo push notification, use the following code:
 
-2. **Optional:** Configure the SDK's different options using the following methods (do this before initializing for optimal results):
+    ```java
+    getIntent().getExtras().get("deepLink")
+    ```
+
+3. **Optional:** Configure the SDK's different options using the following methods (do this before initializing for optimal results):
     ```java
     //Set the log output level
     Configo.setLogLevel(LogLevel value);
@@ -307,4 +317,5 @@ Configo.sharedInstance().trackFeature("feature-key", FeatureEventType);
 ```
 
 Available `FeatureEventType` values: `View`, `Click`, `Use`.
+
 
