@@ -6,6 +6,7 @@ This project *tries* to follow the [Semantic Versioning](http://semver.org) styl
 ### Added
 - Survey campaigns
 - Tooltip campaigns
+- Feature type: disabled/hidden support
 
 ### Fixed
 - Move I/O operations to background threads.
