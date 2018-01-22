@@ -36,51 +36,41 @@ To add the Configo.io Android SDK, follow these steps:
 
 2. Browse to the `configosdk.aar` location, select it, click Finish and OK for Gradle to sync.
 
-3. Open the `Project Structure` menu again, select your project from the left sidebar. Select the `dependencies` tab, press the `+` at the bottom, select `Module Dependency` and select `configosdk`.    
+3. Open `File -> Project Structure` menu again, select your project from the left sidebar. Select the `dependencies` tab, press the `+` at the bottom, select `Module Dependency` and select `configosdk`.    
 
-4. Go to [Firebase](https://console.firebase.google.com), select the relevant project (or create one), download the `google-services.json` file from the `settings` screen and place it in your project's root folder.
-
-5. In the project's `build.gradle` (found in the root folder of the project) add the dependency:
-    ```groovy
-    buildscript {
-        ...
-        dependencies {
-            ...
-            classpath 'com.google.gms:google-services:3.0.0' //We need this for Google Firebase Plugin
-        }
-    }
-    ```
-
-6. In the app's `build.gradle` (found in the `app` folder) add the Firebase plugin:
+4. In the app's `build.gradle` (found in the `app` folder) add `Volley` library dependency:
     ```groovy
     apply plugin: 'com.android.application' //Use this to identify it's the right gradle file
 
     ...
 
     dependencies {
-        compile 'com.google.firebase:firebase-messaging:10.0.1' //Required for push notifications
         compile 'com.android.volley:volley:1.0.0'
         ...
     }
 
-    ...
-
-    apply plugin: 'com.google.gms.google-services' //For firebase plugin to run
     ```
 
-7. In the `AndroidManifest.xml` add URL scheme support (to the main activity), Replace `URL_SCHEME` with the scheme found in the Configo dashboard in the `settings` screen:
+5. In the `AndroidManifest.xml` add a new `intent-filter` to the `DEFAULT` activity:
     ```xml
-    <activity> <!-- This can be any activity but preferably this should be the main activity -->
-        ...
-        <intent-filter>
-            <data android:scheme="URL_SCHEME" /> <!-- Find this URL SCHEME in the dashboard -->
-            <action android:name="android.intent.action.VIEW" />
-            <category android:name="android.intent.category.DEFAULT" />
-            <category android:name="android.intent.category.BROWSABLE" />
-        </intent-filter>
-    </activity>
+    <intent-filter>
+        <data android:scheme="URL_SCHEME" /> <!-- Find this URL SCHEME in the dashboard -->
+    </intent-filter>
     ```
-    <pre><b>NOTE:</b> do not add this to the existing &lt;intent-filter&gt; with the category `LAUNCHER`. Instead add this as a new &lt;intent-filter&gt;</pre>
+   
+6. Optional: Add [Firebase](https://firebase.google.com/docs/android/setup) to your project.
+    - In the `FirebaseInstanceIdService` subclass, add the following in the `onTokenRefresh` method:
+        ```java
+        if(Configo.sharedInstance() != null) Configo.sharedInstance().setPushToken(refreshedToken);
+        ```
+    
+    - In the `FirebaseMessagingService` subclass enclose your custom notification builder with the following `if` statement:
+        ```java
+        if(Configo.sharedInstance() == null || !Configo.sharedInstance().handleRemoteMessage(remoteMessage)) {
+              //Your code
+        }
+        ```
+    
 
 <a name="initialize"></a>
 ## Initialize
@@ -119,7 +109,7 @@ To add the Configo.io Android SDK, follow these steps:
     //Set if the changes in the dashboard will take effect in real-time or in next launch
     Configo.setDynamicallyRefreshData(boolean refresh);
 
-    //Set if Configo should skip status checks and pull data immediately, useful fo tests
+    //Set if Configo should skip status checks and pull data immediately, useful for tests
     Configo.setShouldCheckStatusOnPolling(boolean check);
 
     //Set the interval in which Configo polls the server for updates (milliseconds)
@@ -174,6 +164,14 @@ Identifying and segmenting users for targeting can be done with the following:
 
 All values set in the `userContext` must be `JSONObject` compatible ([reference](https://developer.android.com/reference/org/json/JSONObject.html)).
 
+<a name="dynamic-data-refresh"></a>
+## Dynamic Data Refresh
+The Configo data is updated and loaded every time the app opens, to avoid inconsistency at runtime. The data will be updated at runtime in the following scenarios:
+
+1. Configuring the SDK with `setDynamicallyRefreshData` with `true`.
+2. Calling `forceRefreshData`.
+
+
 <a name="trigger-refresh"></a>
 ## Trigger Refresh
 Configo constantly synchronizes with the dashboard upon app launch and by using the push mechanism. Configo looks out for any local changes that need to be synchronized and updates accordingly.
@@ -193,13 +191,6 @@ Configo.sharedInstance().pullData(new Configo.ConfigoListener {
 <b>NOTE:</b> The listener set here will only be called once, when that specific call was made.<br>It will have no effect on the `listener` set using the `setListener:` method.
 </pre>
 
-<a name="dynamic-data-refresh"></a>
-## Dynamic Data Refresh
-The Configo data is updated and loaded every time the app opens, to avoid inconsistency at runtime. The data will be updated at runtime in the following scenarios:
-
-1. Calling `pullData(listener)` with a valid (non null) listener.
-2. Configuring the SDK with `setDynamicallyRefreshData` with `true`.
-3. Calling `forceRefreshData`.
 
 <a name="sdk-events"></a>
 ## SDK Events
@@ -209,7 +200,7 @@ Configo's operational state can be retrieved using several methods:
 2. Polling for `getLoadState()`.
 
 
-##### Callbacks
+#### Callbacks
 
 Using java interfaces is a convenient way to execute code in response to events. Configo expects all listeners to be of the `ConfigoListener` interface with the following definition:
 
@@ -219,15 +210,18 @@ interface ConfigoListener {
 }
 ```
 
-a listener can be set upon `init` call or any time later using the `setListener` method. This will replace the callback set upon initialization.
+a listener can be set upon `init` call or any time later using the `addListener` method. 
+This will replace the callback set upon initialization.
 
-If a manual data refresh is triggered an optional callback can be set as well via `pullData`. This will set an additional "temporary" listener that will only be called once when the manual refresh is complete. This will not affect the "main" listener set upon initialization or by `setListener`.
+If a manual data refresh is triggered an optional callback can be set as well via `pullData`. 
+This will set an additional "temporary" listener that will only be called once when the manual refresh is complete. 
+This will not affect the "main" listener set upon initialization or by `addListener`.
 
 <pre>
 <b>NOTE:</b> When using pullData the "main" listener will be called as well (if set).
 </pre>
 
-##### Configo State
+#### Configo State
 
 Configo has a method named `getLoadState` that returns either of the following values:
 
@@ -283,7 +277,7 @@ Configo.sharedInstance().getDynamicVariable("object.array[1]", null);
 
 <a name="feature-flags"></a>
 ### Feature Flags
-Feature flags are like dyanmic variables but with boolean values only and with the additional options of distributing randomly to a portion of the users or to multiple segments and optional feature analytics.
+Feature flags are `boolean` dynamic variables with additional options of distribution, either to a random percentage or to target segments. Feature flags also support analytics.
 
 Feature flags can be retrieved like so:
 
