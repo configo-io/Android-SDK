@@ -78,7 +78,7 @@ To add the Configo.io Android SDK, follow these steps:
 1. In the main `Activity` or `Application` subclass' `onCreate` method:
 
     ```java
-    Configo.init(this, "DEV_KEY", "APP_ID", new ConfigoListener {
+    Configo.init(this, "DEV_KEY", "APP_ID", new ConfigoListener() {
         @Override
         public void onResponse(ConfigoError error) {
             //Code executed when configo is updated
