@@ -38,7 +38,7 @@ To add the Configo.io Android SDK, follow these steps:
 
 3. Open `File -> Project Structure` menu again, select your project from the left sidebar. Select the `dependencies` tab, press the `+` at the bottom, select `Module Dependency` and select `configosdk`.    
 
-4. In the app's `build.gradle` (found in the `app` folder) add `Volley` library dependency:
+4. In the app's `build.gradle` (found in the `app` folder) add `Volley` and `RecyclerView` dependencies:
     ```groovy
     apply plugin: 'com.android.application' //Use this to identify it's the right gradle file
 
@@ -46,6 +46,7 @@ To add the Configo.io Android SDK, follow these steps:
 
     dependencies {
         compile 'com.android.volley:volley:1.0.0'
+        compile 'com.android.support:recyclerview-v7:25.2.0' //Replace 25.2.0 with the relevant version
         ...
     }
 
@@ -55,6 +56,9 @@ To add the Configo.io Android SDK, follow these steps:
     ```xml
     <intent-filter>
         <data android:scheme="URL_SCHEME" /> <!-- Find this URL SCHEME in the dashboard -->
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
     </intent-filter>
     ```
    
