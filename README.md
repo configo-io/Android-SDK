@@ -1,6 +1,6 @@
-![alt tag](https://s3.eu-central-1.amazonaws.com/configo.io/overview.png#1)
+![alt tag](https://s3.eu-central-1.amazonaws.com/configo.io/overview.png)
 
-# Configo Android SDK Documentation (1.9.x)
+# Configo Android SDK Documentation (1.12.x)
 
 ### Table of Contents
 
@@ -38,7 +38,7 @@ To add the Configo.io Android SDK, follow these steps:
 
 3. Open `File -> Project Structure` menu again, select your project from the left sidebar. Select the `dependencies` tab, press the `+` at the bottom, select `Module Dependency` and select `configosdk`.    
 
-4. In the app's `build.gradle` (found in the `app` folder) add `Volley` and `RecyclerView` dependencies:
+4. In the app's `build.gradle` (found in the `app` folder) add `Volley`, `RecyclerView` and `support v4` dependencies:
     ```groovy
     apply plugin: 'com.android.application' //Use this to identify it's the right gradle file
 
@@ -46,13 +46,22 @@ To add the Configo.io Android SDK, follow these steps:
 
     dependencies {
         compile 'com.android.volley:volley:1.0.0'
-        compile 'com.android.support:recyclerview-v7:25.2.0' //Replace 25.2.0 with the relevant version
+        compile 'com.android.support:support-v4:25.2.0' //If you already have this dependency of another version, no need to add this 
+        compile 'com.android.support:recyclerview-v7:25.2.0' //Replace 25.2.0 with your support library version
         ...
     }
 
     ```
 
-5. In the `AndroidManifest.xml` add a new `intent-filter` to the `DEFAULT` activity:
+5. In the `AndroidManifest.xml` make sure you have the following permissions (or add them):
+    ```xml
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    ```
+
+6. In the `AndroidManifest.xml` add a new `intent-filter` to the `DEFAULT` activity:
     ```xml
     <intent-filter>
         <data android:scheme="URL_SCHEME" /> <!-- Find this URL SCHEME in the dashboard -->
@@ -62,7 +71,7 @@ To add the Configo.io Android SDK, follow these steps:
     </intent-filter>
     ```
    
-6. Optional: Add [Firebase](https://firebase.google.com/docs/android/setup) to your project.
+7. Optional: Add [Firebase](https://firebase.google.com/docs/android/setup) to your project.
     - In the `FirebaseInstanceIdService` subclass, add the following in the `onTokenRefresh` method:
         ```java
         if(Configo.sharedInstance() != null) Configo.sharedInstance().setPushToken(refreshedToken);
@@ -315,5 +324,3 @@ Configo.sharedInstance().trackFeature("feature-key", FeatureEventType);
 ```
 
 Available `FeatureEventType` values: `View`, `Click`, `Use`.
-
-
