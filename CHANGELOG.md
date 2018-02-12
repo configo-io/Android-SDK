@@ -2,6 +2,19 @@
 All changes to the SDK will be documented in this file.
 This project *tries* to follow the [Semantic Versioning](http://semver.org) style.
 
+## [1.12.0] - 2018-02-12
+### Add
+- Fragment lifecycle listeners
+- Fragment view changes observers
+
+### Remove
+- TOUCH_DISABLE flags logic on campaign render
+
+### Fixed
+- Hidden feature flags hiding elements even when turned on
+- Campaign triggers disabling element action (e.g. button's onClick)
+- Campaigns been presented in old activity when a campaign is rendered and the activity is changed
+
 ## [1.11.0] - 2018-01-22
 ### Remove
 - Firebase services and dependency. Firebase is now optional
