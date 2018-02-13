@@ -2,7 +2,7 @@
 All changes to the SDK will be documented in this file.
 This project *tries* to follow the [Semantic Versioning](http://semver.org) style.
 
-## [1.12.1] - 2018-02-12
+## [1.12.2] - 2018-02-12
 ### Fix
 - Fragment lifecycle listeners not always attached (if Configo init is called after Activity create)
 - Campaigns start/end dates broken because of 32-bit timestamps
